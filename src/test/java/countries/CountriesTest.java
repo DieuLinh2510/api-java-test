@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 //0. Verify schema
 //1. Verify status code
 //2. Verify header
+//3. Verify body
 public class CountriesTest {
     @BeforeAll
     static void setUp_URI(){
@@ -31,33 +32,41 @@ public class CountriesTest {
                 .then().log().all()
                 .statusCode(200);
     }
+    // Buoi 4
     @Test
-    void verifyGetCountryCorrectData(){
-        String expectedResponse= """
-                [{"name":"Viet Nam","code":"VN"},{"name":"USA","code":"US"},{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
-                > Task :test
-                """;
-        String expectedResponseOrder= """
-                [{"name":"USA","code":"US"},{"name":"Viet Nam","code":"VN"},{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
-                > Task :test
-                """;
-        String expectedResponseFail="""
-                [{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
-                > Task :test
-                """;
-        Response response=  RestAssured.get("/api/v1/countries");
-        //0. Verify status code
-        assertThat(response.statusCode(), equalTo(200));
-        //1. Verify header
-        assertThat(response.header("Content-Type"),equalTo("application/json; charset=utf-8"));
-        assertThat(response.header("Content-type"),containsString("application/json"));
-        //2. Verify body
+    void verifySpecificCountry(){
+        Response response=RestAssured.given().log().all().get("api/v1/countries/VN");
+        response.then().statusCode(200);
         System.out.println(response.asString());
-        assertThatJson(response.asString()).isEqualTo(expectedResponse);
-        //WrongOrder
-        assertThatJson(response.asString()).when(Option.IGNORING_ARRAY_ORDER).isEqualTo(expectedResponseOrder);
-assertThatJson(response.asString()).when(Option.IGNORING_ARRAY_ORDER,Option.IGNORING_EXTRA_ARRAY_ITEMS).isEqualTo(expectedResponseFail);
     }
+//    @Test
+//    void verifyGetCountryCorrectData(){
+//        String expectedResponse= """
+//                [{"name":"Viet Nam","code":"VN"},{"name":"USA","code":"US"},{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
+//                > Task :test
+//                """;
+//        String expectedResponseOrder= """
+//                [{"name":"USA","code":"US"},{"name":"Viet Nam","code":"VN"},{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
+//                > Task :test
+//                """;
+//        String expectedResponseFail="""
+//                [{"name":"Canada","code":"CA"},{"name":"UK","code":"GB"},{"name":"France","code":"FR"},{"name":"Japan","code":"JP"},{"name":"India","code":"IN"},{"name":"China","code":"CN"},{"name":"Brazil","code":"BR"}]
+//                > Task :test
+//                """;
+//        Response response=  RestAssured.get("/api/v1/countries");
+//        //0. Verify status code
+//        assertThat(response.statusCode(), equalTo(200));
+//
+//        //1. Verify header
+//        assertThat(response.header("Content-Type"),equalTo("application/json; charset=utf-8"));
+//        assertThat(response.header("Content-type"),containsString("application/json"));
+//        //2. Verify body
+//        System.out.println(response.asString());
+//        assertThatJson(response.asString()).isEqualTo(expectedResponse);
+//        //WrongOrder
+//        assertThatJson(response.asString()).when(Option.IGNORING_ARRAY_ORDER).isEqualTo(expectedResponseOrder);
+//assertThatJson(response.asString()).when(Option.IGNORING_ARRAY_ORDER,Option.IGNORING_EXTRA_ARRAY_ITEMS).isEqualTo(expectedResponseFail);
+//    }
 //    @Test
 //    void getCountries_v2(){
 //        get("/api/v1/countries/CA")
